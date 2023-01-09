@@ -221,7 +221,7 @@
 (function() {
     "use strict";
     if (window.location.href.includes("/www.reddit.com/") && !window.location.href.includes("/www.reddit.com/gallery/") && !window.location.href.includes("/www.reddit.com/poll/")) {
-        window.location.replace(window.location.toString().replace("/www.reddit.com/", "/reddit.com/r/popular/?geo_filter=GLOBAL/"));
+        window.location.replace(window.location.toString().replace("/www.reddit.com/", "/https://www.reddit.com/r/popular/?geo_filter=US/"));
     }
 })();
 
