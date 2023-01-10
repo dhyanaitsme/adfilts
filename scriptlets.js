@@ -220,8 +220,8 @@
 /// alias orr.js
 (function() {
     "use strict";
-    if (window.location.href.includes("/ww.reddit.com/r/sweden/") && !window.location.href.includes("/www.reddit.com/r/popular/?geo_filter=US/") && !window.location.href.includes("/www.reddit.com/gallery/") && !window.location.href.includes("/www.reddit.com/poll/")) {
-        window.location.replace(window.location.toString().replace("/www.reddit.com/r/sweden/", "/www.reddit.com/r/popular/?geo_filter=US/"));
+    if (window.location.href.includes("/ww.reddit.com/") && !window.location.href.includes("/www.reddit.com/r/linux/") && !window.location.href.includes("/www.reddit.com/gallery/") && !window.location.href.includes("/www.reddit.com/poll/")) {
+        window.location.replace(window.location.toString().replace("/www.reddit.com/r/sweden/", "/www.reddit.com/r/linux/"));
     }
 })();
 
