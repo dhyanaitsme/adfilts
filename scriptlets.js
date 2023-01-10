@@ -221,7 +221,7 @@
 (function() {
     "use strict";
     if (window.location.href.includes("/www.reddit.com/") && !window.location.href.includes("/www.reddit.com/gallery/") && !window.location.href.includes("/www.reddit.com/poll/")) {
-        window.location.replace(window.location.toString().replace("/www.reddit.com/", "/www.reddit.com/r/linux/"));
+        window.location.replace(window.location.toString().replace("/?geo_filter=SE/", "/www.reddit.com/r/linux/"));
     }
 })();
 
