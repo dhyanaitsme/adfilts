@@ -220,8 +220,8 @@
 /// alias orr.js
 (function() {
     "use strict";
-    if (window.location.href.includes("/www.reddit.com/") && !window.location.href.includes("/www.reddit.com/gallery/") && !window.location.href.includes("/www.reddit.com/poll/")) {
-        window.location.replace(window.location.toString().replace("/?geo_filter=SE/", "/www.reddit.com/r/linux/"));
+    if (window.location.href.includes("/https://www.reddit.com/r/popular/?geo_filter=US/") && !window.location.href.includes("/www.reddit.com/gallery/") && !window.location.href.includes("/www.reddit.com/poll/")) {
+        window.location.replace(window.location.toString().replace("/https://www.reddit.com/r/popular/?geo_filter=US/", "/www.reddit.com/r/linux/"));
     }
 })();
 
