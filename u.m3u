@@ -1,3 +1,4 @@
+#EXTM3U
 #EXTINF:0,| IPTV | myserveriptv.com
 http://myserveriptv.com:2082/get.php?username=7wOd6fH332c1&password=8Skfy98Fd74f&type=m3u_plus
 #EXTINF:0,| SW | SVT1
