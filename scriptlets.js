@@ -787,6 +787,16 @@ function responsePrune(
     }
 })();
 
+/// nyaa-dark-mode-enabler.js
+/// alias ndme.js
+(function() {
+    window.addEventListener("DOMContentLoaded", function() {
+        if (!document.body.classList.contains("dark")) {
+            document.querySelector("a[id='themeToggle']").click();
+        }
+    });
+})();
+
 /// old-reddit-redirector.js
 /// alias orr.js
 (function() {
