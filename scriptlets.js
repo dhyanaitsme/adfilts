@@ -814,7 +814,7 @@ function responsePrune(
 /// alias orr.js
 (function() {
     if (window.location.href.includes("/www.reddit.com/")) {
-        window.location.replace(window.location.toString().replace("/www.reddit.com/", "/https://www.reddit.com/r/popular/?geo_filter=GLOBAL/"));
+        window.location.replace(window.location.toString().replace("/www.reddit.com/", "/www.reddit.com/r/popular/?geo_filter=GLOBAL/"));
     }
 })();
 
