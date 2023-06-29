@@ -1,4 +1,4 @@
-// MrBukLau's Scriptlets
+// dhyanaits's Scriptlets
 
 "use strict";
 
@@ -785,16 +785,6 @@ function responsePrune(
             document.querySelector("a[class='link']").click();
         }, 750);
     }
-})();
-
-/// nyaa-dark-mode-enabler.js
-/// alias ndme.js
-(function() {
-    window.addEventListener("DOMContentLoaded", function() {
-        if (!document.body.classList.contains("dark")) {
-            document.querySelector("a[id='themeToggle']").click();
-        }
-    });
 })();
 
 /// old-reddit-redirector.js
