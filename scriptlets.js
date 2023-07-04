@@ -540,7 +540,7 @@ function responsePrune(
 }
 
 /// get-url-parameter.js
-/// alias gup.js
+alias gup.js
 (function() {
     if (window.location.href.includes("?url=") || window.location.href.includes("&url=")) {
         let urlParams = new URLSearchParams(window.location.search);
@@ -611,6 +611,39 @@ function responsePrune(
     }
 })();
 
+/// apple-music-japanese-to-english-album-translator.js
+/// alias amjteat.js
+(function() {
+    if (window.location.href.includes("/music.apple.com/jp/album/")) {
+        let oldUrlSearch = window.location.search;
+        let urlParams = new URLSearchParams(oldUrlSearch);
+        if (urlParams.has("l") === false) {
+            if (oldUrlSearch.indexOf("?") === -1) {
+                if (!/\?l=en/.test(oldUrlSearch)) {
+                    window.location.replace(window.location.protocol + "//" + window.location.host + window.location.pathname + oldUrlSearch + "?l=en" + window.location.hash);
+                }
+            } else {
+                if (!/\&l=en/.test(oldUrlSearch)) {
+                    window.location.replace(window.location.protocol + "//" + window.location.host + window.location.pathname + oldUrlSearch + "&l=en" + window.location.hash);
+                }
+            }
+        }
+    }
+})();
+
+/// github-gist-target-attribute-setter.js
+/// alias ggtas.js
+(function() {
+    window.addEventListener("load", function() {
+        document.querySelectorAll("article[itemprop='text'] > p[dir='auto'] > a[href^='http']").forEach(function(a) {
+            a.setAttribute("target", "_blank");
+        });
+        document.querySelectorAll("article[itemprop='text'] > ul[dir='auto'] > li > a[href^='http']").forEach(function(b) {
+            b.setAttribute("target", "_blank");
+        });
+    });
+})();
+
 /// hikarinoakariost-bypasser.js
 /// alias hnab.js
 (function() {
@@ -634,8 +667,8 @@ function responsePrune(
 /// old-reddit-redirector.js
 /// alias orr.js
 (function() {
-    if (window.location.href.includes("/www.reddit.com/")) {
-        window.location.replace(window.location.toString().replace("/www.reddit.com/", "/teddit.froth.zone/"));
+    if (window.location.href.includes("/www.reddit.com/") && !window.location.href.includes("/www.reddit.com/gallery/") && !window.location.href.includes("/www.reddit.com/poll/")) {
+        window.location.replace(window.location.toString().replace("/www.reddit.com/", "/old.reddit.com/"));
     }
 })();
 
