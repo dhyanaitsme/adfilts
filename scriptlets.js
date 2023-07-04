@@ -17,8 +17,8 @@
 /// alias rsre.js
 /// world ISOLATED
 // example.com##+js(rsre, [selector])
-function removeShadowRootElem(
-	selector = ''
+function removeShadowRootElem(  
+	selector = '' 
 ) {
 	  if ( selector === '' ) { return; }
 	  const queryShadowRootElement = (shadowRootElement, rootElement) => {
@@ -55,21 +55,21 @@ function setAttr(
 	token = '',
 	attrValue = '',
 	selector = '',
-	runAt = ''
+	runAt = '' 
 ) {
 	if ( token === '' ) { return; }
 	const tokens = token.split(/\s*\|\s*/);
 	if ( selector === '' ) { selector = `[${tokens.join('],[')}]`; }
 	let timer;
 	const setattr = () => {
-	timer = undefined;
+	timer = undefined;	
 	const nodes = document.querySelectorAll(selector);
 	try {
 		for (const node of nodes) {
 			for ( const attr of tokens ) {
-			      if ( attr !== attrValue) {
+			      if ( attr !== attrValue) { 
 				   node.setAttribute(attr, attrValue);
-			      }
+			      }	      
 			}
 		}
 	} catch { }
@@ -118,21 +118,21 @@ function renameAttr(
 	selector = '',
 	oldattr = '',
 	newattr = '',
-	runAt = ''
+	runAt = '' 
 ) {
 	if ( selector === '' || oldattr === '' || newattr === '' ) { return; }
 	let timer;
 	const renameattr = ( ) => {
 		timer = undefined;
-		const elems = document.querySelectorAll( selector );
+		const elems = document.querySelectorAll(selector);
 		try {
 			for ( const elem of elems ) {
 				if ( elem.hasAttribute( oldattr ) ) {
-				     const value = elem.getAttribute( oldattr );
+				     const value = elem.getAttribute( oldattr );		
 				     elem.removeAttribute( oldattr );
 				     elem.setAttribute( newattr, value );
 				}
-			}
+			}	
 		} catch { }
 	};
 	const mutationHandler = mutations => {
@@ -176,7 +176,7 @@ function renameAttr(
 // example.com##+js(ac, class, [selector])
 function addClass(
 	needle = '',
-	selector = ''
+	selector = '' 
 ) {
 	if ( needle === '' ) { return; }
 	const needles = needle.split(/\s*\|\s*/);
@@ -204,19 +204,19 @@ function addClass(
 function replaceClass(
 	selector = '',
 	oldclass = '',
-	newclass = '',
+	newclass = '', 
 	runAt = ''
 ) {
 	if ( selector === '' || oldclass === '' || newclass === '' ) { return; }
 	let timer;
 	const replaceclass = ( ) => {
-	  timer = undefined;
+	  timer = undefined;	
 	  const nodes = document.querySelectorAll(selector);
 	  try {
 		for ( const node of nodes ) {
-		      if ( node.classList.contains(oldclass) ) {
+		      if ( node.classList.contains(oldclass) ) {	
 			   node.classList.replace(oldclass, newclass);
-		      }
+		      }	      
 		}
 	  } catch { }
 	};
@@ -263,7 +263,7 @@ function moveAttrProp(
 	selector = '',
 	element = '',
 	newattr = '',
-	oldattr = ''
+	oldattr = '' 
 ) {
 	if ( selector === '' || element === '') { return; }
 	const map = ev => {
@@ -291,7 +291,7 @@ function appendElem(
 	selector = '',
 	elem = '',
 	attr = '',
-	value = ''
+	value = '' 
 ) {
 	if ( selector === '' ) { return; }
 	const appendNode = ev => {
@@ -318,15 +318,15 @@ function appendElem(
 // example.com##+js(cf, funcName, funcDelay)
 function callFunction(
 	funcCall = '',
-	funcDelay = ''
+	funcDelay = '' 
 ) {
 	      if ( funcCall === '' || funcDelay === '' ) { return; }
-	      const funcInvoke = ev => {
+	      const funcInvoke = ev => { 
 			if (ev) { self.removeEventListener(ev.type, funcInvoke, true); }
-			try {
+			try { 
 				setTimeout(window[funcCall], funcDelay);
 			} catch { }
-	      };
+	      };	      
 	      if (document.readyState === 'interactive' || document.readyState === 'complete') {
 		    funcInvoke();
 	      } else {
@@ -355,7 +355,7 @@ function noAlertIf(
 		            let params;
 			    try {
                             	  params = String(args);
-			    } catch { }
+			    } catch { }	    
                             let defuse = false;
                             if ( log !== undefined ) {
                                  log('uBO: alert("%s")', params);
@@ -364,130 +364,19 @@ function noAlertIf(
                             }
                             if ( !defuse ) {
                                  return target.apply(thisArg, args);
-                            }
+                            }  
                         }
                 });
-}
-
-/// removeSessionItem.js
-/// alias rsi.js
-/// world ISOLATED
-// example.com##+js(rsi, key)
-function removeSessionItem(
-        key = '',
-	runAt = ''
-) {
-	    if ( key === '' ) { return; }
-	    const keys = key.split(/\s*\|\s*/);
-	    let timer;
-	    const removeItem = () => {
-		  timer = undefined;
-		  if ( key === '*' ) { return sessionStorage.clear(); }
-		  try {
-			   for (const keyName of keys) {
-				sessionStorage.removeItem(keyName);
-			   }
-		  } catch { }
-	    };
-	    const mutationHandler = mutations => {
-		if ( timer !== undefined ) { return; }
-		let skip = true;
-		for ( let i = 0; i < mutations.length && skip; i++ ) {
-		    const { type, addedNodes, removedNodes } = mutations[i];
-		    if ( type === 'attributes' ) { skip = false; }
-		    for ( let j = 0; j < addedNodes.length && skip; j++ ) {
-			if ( addedNodes[j].nodeType === 1 ) { skip = false; break; }
-		    }
-		    for ( let j = 0; j < removedNodes.length && skip; j++ ) {
-			if ( removedNodes[j].nodeType === 1 ) { skip = false; break; }
-		    }
-		}
-		if ( skip ) { return; }
-		timer = self.requestIdleCallback(removeItem, { timeout: 10 });
-	    };
-	    const start = ( ) => {
-		removeItem();
-		if ( /\bloop\b/.test(runAt) === false ) { return; }
-		const observer = new MutationObserver(mutationHandler);
-		observer.observe(document.documentElement, {
-		    attributes: true,
-		    childList: true,
-		    subtree: true,
-		});
-	    };
-	    if ( document.readyState !== 'complete' && /\bcomplete\b/.test(runAt) ) {
-            self.addEventListener('load', start, { once: true });
-    	    } else if ( document.readyState !== 'loading' || /\basap\b/.test(runAt) ) {
-            start();
-    	    } else {
-            self.addEventListener('DOMContentLoaded', start, { once: true });
-    	    }
-}
-
-/// setSessionItem.js
-/// alias ssi.js
-/// world ISOLATED
-// example.com##+js(ssi, key, value)
-function setSessionItem(
-	key = '',
-	value = '',
-	runAt = ''
-) {
-	    if ( key === '' ) { return; }
-	    const keys = key.split(/\s*\|\s*/);
-	    let timer;
-	    const setItem = () => {
-		  timer = undefined;
-		  try {
-			   for (const keyName of keys) {
-				if (sessionStorage.getItem(keyName) === value) { break; }
-				    sessionStorage.setItem(keyName, value);
-			   }
-		  } catch { }
-	    };
-	    const mutationHandler = mutations => {
-		if ( timer !== undefined ) { return; }
-		let skip = true;
-		for ( let i = 0; i < mutations.length && skip; i++ ) {
-		    const { type, addedNodes, removedNodes } = mutations[i];
-		    if ( type === 'attributes' ) { skip = false; }
-		    for ( let j = 0; j < addedNodes.length && skip; j++ ) {
-			if ( addedNodes[j].nodeType === 1 ) { skip = false; break; }
-		    }
-		    for ( let j = 0; j < removedNodes.length && skip; j++ ) {
-			if ( removedNodes[j].nodeType === 1 ) { skip = false; break; }
-		    }
-		}
-		if ( skip ) { return; }
-		timer = self.requestIdleCallback(setItem, { timeout: 10 });
-	    };
-	    const start = ( ) => {
-		setItem();
-		if ( /\bloop\b/.test(runAt) === false ) { return; }
-		const observer = new MutationObserver(mutationHandler);
-		observer.observe(document.documentElement, {
-		    attributes: true,
-		    childList: true,
-		    subtree: true,
-		});
-	    };
-	    if ( document.readyState !== 'complete' && /\bcomplete\b/.test(runAt) ) {
-        self.addEventListener('load', start, { once: true });
-    	} else if ( document.readyState !== 'loading' || /\basap\b/.test(runAt) ) {
-        start();
-    	} else {
-        self.addEventListener('DOMContentLoaded', start, { once: true });
-    	}
 }
 
 /// insert-child-before.js
 /// alias icb.js
 /// world ISOLATED
 // example.com##+js(icb, element, node)
-function insertChildBefore(
+function insertChildBefore( 
 	selector = '',
 	element = '',
-	runAt = ''
+	runAt = '' 
 ) {
 	if ( selector === '' || element === '' ) { return; }
 	let timer;
@@ -498,7 +387,7 @@ function insertChildBefore(
 			const nodes = document.querySelectorAll(element);
 			for (let i = 0; i < elems.length; i++) {
 			    elems[i].before(nodes[i]);
-			}
+			}	
 		} catch { }
 	};
 	const mutationHandler = mutations => {
@@ -540,10 +429,10 @@ function insertChildBefore(
 /// alias ica.js
 /// world ISOLATED
 // example.com##+js(ica, element, node)
-function insertChildAfter(
+function insertChildAfter( 
 	selector = '',
 	element = '',
-	runAt = ''
+	runAt = '' 
 ) {
 	if ( selector === '' || element === '' ) { return; }
 	let timer;
@@ -554,7 +443,7 @@ function insertChildAfter(
 			const nodes = document.querySelectorAll(element);
 			for (let i = 0; i < elems.length; i++) {
 			    elems[i].after(nodes[i]);
-			}
+			}	
 		} catch { }
 	};
 	const mutationHandler = mutations => {
@@ -599,9 +488,9 @@ function insertChildAfter(
 function responsePrune(
          resURL = '',
          needle = '',
-         textContent = ''
+         textContent = '' 
 ) {
-	  resURL= patternToRegex(resURL, "gms");
+	  resURL= patternToRegex(resURL, "gms"); 
 	  needle = patternToRegex(needle, "gms");
           if ( textContent === '' ) { textContent = ''; }
           const pruner = stringText => {
