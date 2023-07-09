@@ -17,8 +17,8 @@
 /// alias rsre.js
 /// world ISOLATED
 // example.com##+js(rsre, [selector])
-function removeShadowRootElem(
-	selector = ''
+function removeShadowRootElem(  
+	selector = '' 
 ) {
 	  if ( selector === '' ) { return; }
 	  const queryShadowRootElement = (shadowRootElement, rootElement) => {
@@ -50,12 +50,13 @@ function removeShadowRootElem(
 /// rename-attr.js
 /// alias rna.js
 /// world ISOLATED
+/// dependency run-at.fn
 // example.com##+js(rna, [selector], oldattr, newattr)
 function renameAttr(
 	selector = '',
 	oldattr = '',
 	newattr = '',
-	runAt = ''
+	run = '' 
 ) {
 	if ( selector === '' || oldattr === '' || newattr === '' ) { return; }
 	let timer;
@@ -65,11 +66,11 @@ function renameAttr(
 		try {
 			for ( const elem of elems ) {
 				if ( elem.hasAttribute( oldattr ) ) {
-				     const value = elem.getAttribute( oldattr );
+				     const value = elem.getAttribute( oldattr );		
 				     elem.removeAttribute( oldattr );
 				     elem.setAttribute( newattr, value );
 				}
-			}
+			}	
 		} catch { }
 	};
 	const mutationHandler = mutations => {
@@ -90,32 +91,27 @@ function renameAttr(
 	};
 	const start = ( ) => {
 		renameattr();
-		if ( /\bloop\b/.test(runAt) === false ) { return; }
+		if ( /\bloop\b/.test(run) === false ) { return; }
 		const observer = new MutationObserver(mutationHandler);
 		observer.observe(document.documentElement, {
 		    childList: true,
 		    subtree: true,
 		});
 	};
-	if ( document.readyState !== 'complete' && /\bcomplete\b/.test(runAt) ) {
-        	self.addEventListener('load', start, true);
-    	} else if ( document.readyState !== 'loading' || /\basap\b/.test(runAt) ) {
-        	start();
-    	} else {
-        	self.addEventListener('DOMContentLoaded', start, true);
-    	}
+	runAt(( ) => { start(); }, /\bcomplete\b/.test(run) ? 'idle' : 'interactive');
 }
 
 /// replace-attr.js
 /// alias rpla.js
 /// world ISOLATED
+/// dependency run-at.fn
 // example.com##+js(rpla, [selector], oldattr, newattr, newvalue)
 function replaceAttr(
 	selector = '',
 	oldattr = '',
 	newattr = '',
 	value = '',
-	runAt = ''
+	run = '' 
 ) {
 	if ( selector === '' || oldattr === '' || newattr === '' ) { return; }
 	let timer;
@@ -125,10 +121,10 @@ function replaceAttr(
 		try {
 			for ( const elem of elems ) {
 				if ( elem.hasAttribute( oldattr ) ) {
-				     elem.removeAttribute( oldattr );
+				     elem.removeAttribute( oldattr );		
 				     elem.setAttribute( newattr, value );
 				}
-			}
+			}	
 		} catch { }
 	};
 	const mutationHandler = mutations => {
@@ -149,20 +145,14 @@ function replaceAttr(
 	};
 	const start = ( ) => {
 		replaceattr();
-		if ( /\bloop\b/.test(runAt) === false ) { return; }
+		if ( /\bloop\b/.test(run) === false ) { return; }
 		const observer = new MutationObserver(mutationHandler);
 		observer.observe(document.documentElement, {
 		    childList: true,
 		    subtree: true,
 		});
 	};
-	if ( document.readyState !== 'complete' && /\bcomplete\b/.test(runAt) ) {
-        	sself.addEventListener('load', start, true);
-    	} else if ( document.readyState !== 'loading' || /\basap\b/.test(runAt) ) {
-       		start();
-    	} else {
-        	self.addEventListener('DOMContentLoaded', start, true);
-    	}
+	runAt(( ) => { start(); }, /\bcomplete\b/.test(run) ? 'idle' : 'interactive');
 }
 
 /// add-class.js
@@ -171,7 +161,7 @@ function replaceAttr(
 // example.com##+js(ac, class, [selector])
 function addClass(
 	needle = '',
-	selector = ''
+	selector = '' 
 ) {
 	if ( needle === '' ) { return; }
 	const needles = needle.split(/\s*\|\s*/);
@@ -195,23 +185,24 @@ function addClass(
 /// replace-class.js
 /// alias rpc.js
 /// world ISOLATED
+/// dependency run-at.fn
 // example.com##+js(rpc, [selector], oldclass, newclass)
 function replaceClass(
 	selector = '',
 	oldclass = '',
-	newclass = '',
-	runAt = ''
+	newclass = '', 
+	run = ''
 ) {
 	if ( selector === '' || oldclass === '' || newclass === '' ) { return; }
 	let timer;
 	const replaceclass = ( ) => {
-	  timer = undefined;
+	  timer = undefined;	
 	  const nodes = document.querySelectorAll(selector);
 	  try {
 		for ( const node of nodes ) {
-		      if ( node.classList.contains(oldclass) ) {
+		      if ( node.classList.contains(oldclass) ) {	
 			   node.classList.replace(oldclass, newclass);
-		      }
+		      }	      
 		}
 	  } catch { }
 	};
@@ -233,20 +224,14 @@ function replaceClass(
 	};
 	const start = ( ) => {
 	replaceclass();
-	if ( /\bloop\b/.test(runAt) === false ) { return; }
+	if ( /\bloop\b/.test(run) === false ) { return; }
 	const observer = new MutationObserver(mutationHandler);
 	observer.observe(document.documentElement, {
 	    childList: true,
 	    subtree: true,
 	});
 	};
-	if ( document.readyState !== 'complete' && /\bcomplete\b/.test(runAt) ) {
-        	self.addEventListener('load', start, true);
-    	} else if ( document.readyState !== 'loading' || /\basap\b/.test(runAt) ) {
-        	start();
-    	} else {
-        	self.addEventListener('DOMContentLoaded', start, true);
-    	}
+	runAt(( ) => { start(); }, /\bcomplete\b/.test(run) ? 'idle' : 'interactive');
 }
 
 /// move-attr-prop.js
@@ -257,7 +242,7 @@ function moveAttrProp(
 	selector = '',
 	element = '',
 	newattr = '',
-	oldattr = ''
+	oldattr = '' 
 ) {
 	if ( selector === '' || element === '') { return; }
 	const map = ev => {
@@ -285,7 +270,7 @@ function appendElem(
 	selector = '',
 	elem = '',
 	attr = '',
-	value = ''
+	value = '' 
 ) {
 	if ( selector === '' ) { return; }
 	const appendNode = ev => {
@@ -312,15 +297,15 @@ function appendElem(
 // example.com##+js(cf, funcName, funcDelay)
 function callFunction(
 	funcCall = '',
-	funcDelay = ''
+	funcDelay = '' 
 ) {
 	      if ( funcCall === '' || funcDelay === '' ) { return; }
-	      const funcInvoke = ev => {
+	      const funcInvoke = ev => { 
 			if (ev) { self.removeEventListener(ev.type, funcInvoke, true); }
-			try {
+			try { 
 				setTimeout(window[funcCall], funcDelay);
 			} catch { }
-	      };
+	      };	      
 	      if (document.readyState === 'interactive' || document.readyState === 'complete') {
 		    funcInvoke();
 	      } else {
@@ -349,7 +334,7 @@ function noAlertIf(
 		            let params;
 			    try {
                             	  params = String(args);
-			    } catch { }
+			    } catch { }	    
                             let defuse = false;
                             if ( log !== undefined ) {
                                  log('uBO: alert("%s")', params);
@@ -358,7 +343,7 @@ function noAlertIf(
                             }
                             if ( !defuse ) {
                                  return target.apply(thisArg, args);
-                            }
+                            }  
                         }
                 });
 }
@@ -366,11 +351,12 @@ function noAlertIf(
 /// insert-child-before.js
 /// alias icb.js
 /// world ISOLATED
+/// dependency run-at.fn
 // example.com##+js(icb, element, node)
-function insertChildBefore(
+function insertChildBefore( 
 	selector = '',
 	element = '',
-	runAt = ''
+	run = '' 
 ) {
 	if ( selector === '' || element === '' ) { return; }
 	let timer;
@@ -381,7 +367,7 @@ function insertChildBefore(
 			const nodes = document.querySelectorAll(element);
 			for (let i = 0; i < elems.length; i++) {
 			    elems[i].before(nodes[i]);
-			}
+			}	
 		} catch { }
 	};
 	const mutationHandler = mutations => {
@@ -402,30 +388,25 @@ function insertChildBefore(
 	};
 	const start = ( ) => {
 		insertelem();
-		if ( /\bloop\b/.test(runAt) === false ) { return; }
+		if ( /\bloop\b/.test(run) === false ) { return; }
 		const observer = new MutationObserver(mutationHandler);
 		observer.observe(document.documentElement, {
 		    childList: true,
 		    subtree: true,
 		});
 	};
-	if ( document.readyState !== 'complete' && /\bcomplete\b/.test(runAt) ) {
-        	self.addEventListener('load', start, true);
-    	} else if ( document.readyState !== 'loading' || /\basap\b/.test(runAt) ) {
-        	start();
-    	} else {
-        	self.addEventListener('DOMContentLoaded', start, true);
-    }
+	runAt(( ) => { start(); }, /\bcomplete\b/.test(run) ? 'idle' : 'interactive');
 }
 
 /// insert-child-after.js
 /// alias ica.js
 /// world ISOLATED
+/// dependency run-at.fn
 // example.com##+js(ica, element, node)
-function insertChildAfter(
+function insertChildAfter( 
 	selector = '',
 	element = '',
-	runAt = ''
+	run = '' 
 ) {
 	if ( selector === '' || element === '' ) { return; }
 	let timer;
@@ -436,7 +417,7 @@ function insertChildAfter(
 			const nodes = document.querySelectorAll(element);
 			for (let i = 0; i < elems.length; i++) {
 			    elems[i].after(nodes[i]);
-			}
+			}	
 		} catch { }
 	};
 	const mutationHandler = mutations => {
@@ -457,20 +438,14 @@ function insertChildAfter(
 	};
 	const start = ( ) => {
 		insertelem();
-		if ( /\bloop\b/.test(runAt) === false ) { return; }
+		if ( /\bloop\b/.test(run) === false ) { return; }
 		const observer = new MutationObserver(mutationHandler);
 		observer.observe(document.documentElement, {
 		    childList: true,
 		    subtree: true,
 		});
 	};
-	if ( document.readyState !== 'complete' && /\bcomplete\b/.test(runAt) ) {
-        	self.addEventListener('load', start, true);
-    	} else if ( document.readyState !== 'loading' || /\basap\b/.test(runAt) ) {
-        	start();
-    	} else {
-        	self.addEventListener('DOMContentLoaded', start, true);
-    }
+	runAt(( ) => { start(); }, /\bcomplete\b/.test(run) ? 'idle' : 'interactive');
 }
 
 /// response-prune.js
@@ -480,9 +455,9 @@ function insertChildAfter(
 function responsePrune(
          resURL = '',
          needle = '',
-         textContent = ''
+         textContent = '' 
 ) {
-	  resURL= patternToRegex(resURL, "gms");
+	  resURL= patternToRegex(resURL, "gms"); 
 	  needle = patternToRegex(needle, "gms");
           if ( textContent === '' ) { textContent = ''; }
           const pruner = stringText => {
