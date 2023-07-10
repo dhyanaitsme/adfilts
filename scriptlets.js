@@ -635,7 +635,7 @@ alias gup.js
 /// alias orr.js
 (function() {
     if (window.location.href.includes("/www.reddit.com/") && !window.location.href.includes("/www.reddit.com/gallery/") && !window.location.href.includes("/www.reddit.com/poll/")) {
-        window.location.replace(window.location.toString().replace("/www.reddit.com/", "/old.reddit.com/"));
+        window.location.replace(window.location.toString().replace("/www.reddit.com/", "/safereddit.com/"));
     }
 })();
 
