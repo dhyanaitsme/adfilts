@@ -157,6 +157,7 @@ function replaceAttr(
 
 /// add-class.js
 /// alias ac.js
+/// dependency run-at.fn
 /// world ISOLATED
 // example.com##+js(ac, class, [selector])
 function addClass(
@@ -166,8 +167,7 @@ function addClass(
 	if ( needle === '' ) { return; }
 	const needles = needle.split(/\s*\|\s*/);
 	if ( selector === '' ) { selector = '.' + needles.map(a => CSS.escape(a)).join(',.'); }
-	const addclass = ev => {
-		if (ev) { self.removeEventListener(ev.type, addclass, true);  }
+	const addclass = ( ) => {
 		const nodes = document.querySelectorAll(selector);
 		try {
 			for ( const node of nodes ) {
@@ -175,11 +175,7 @@ function addClass(
 			}
 		} catch { }
 	};
-	if (document.readyState === 'loading') {
-	      self.addEventListener('DOMContentLoaded', addclass, true);
-	} else {
-	      addclass();
-	}
+	runAt(( ) => { addclass(); }, 'interactive');
 }
 
 /// replace-class.js
@@ -236,6 +232,7 @@ function replaceClass(
 
 /// move-attr-prop.js
 /// alias map.js
+/// dependency run-at.fn
 /// world ISOLATED
 // example.com##+js(map, [selector], [selector2], attr, attr2)
 function moveAttrProp(
@@ -245,8 +242,7 @@ function moveAttrProp(
 	oldattr = '' 
 ) {
 	if ( selector === '' || element === '') { return; }
-	const map = ev => {
-		if (ev) { self.removeEventListener(ev.type, map, true); }
+	const map = ( ) => {
 		try {
 			const elem = document.querySelectorAll(selector);
 			const elem2 = document.querySelectorAll(element);
@@ -255,15 +251,12 @@ function moveAttrProp(
 			}
 		} catch { }
 	};
-	if (document.readyState === 'loading') {
-		    self.addEventListener('DOMContentLoaded', map, true);
-	} else {
-		    map();
-	}
+	runAt(( ) => { map(); }, 'interactive');
 }
 
 /// append-elem.js
 /// alias ape.js
+/// dependency run-at.fn
 /// world ISOLATED
 // example.com##+js(ape, [selector], element, attribute, value)
 function appendElem(
@@ -273,8 +266,7 @@ function appendElem(
 	value = '' 
 ) {
 	if ( selector === '' ) { return; }
-	const appendNode = ev => {
-		if (ev) { self.removeEventListener(ev.type, appendNode, true); }
+	const appendNode = ( ) => {
 		try {
 			const elements = document.querySelectorAll(selector);
 			for ( const element of elements ) {
@@ -284,15 +276,12 @@ function appendElem(
 			}
 		} catch { }
 	};
-	if (document.readyState === 'complete') {
-		    appendNode();
-	} else {
-		    self.addEventListener('load', appendNode, true);
-	}
+	runAt(( ) => { appendNode(); }, 'interactive');
 }
 
 /// callfunction.js
 /// alias cf.js
+/// dependency run-at.fn
 /// world ISOLATED
 // example.com##+js(cf, funcName, funcDelay)
 function callFunction(
@@ -300,17 +289,12 @@ function callFunction(
 	funcDelay = '' 
 ) {
 	      if ( funcCall === '' || funcDelay === '' ) { return; }
-	      const funcInvoke = ev => { 
-			if (ev) { self.removeEventListener(ev.type, funcInvoke, true); }
+	      const funcInvoke = ( ) => { 
 			try { 
 				setTimeout(window[funcCall], funcDelay);
 			} catch { }
 	      };	      
-	      if (document.readyState === 'interactive' || document.readyState === 'complete') {
-		    funcInvoke();
-	      } else {
-		    self.addEventListener('DOMContentLoaded', funcInvoke, true);
-	      }
+	      runAt(( ) => { funcInvoke(); }, 'interactive');
 }
 
 /// no-alert-if.js
@@ -326,7 +310,7 @@ function noAlertIf(
                 } else if ( needle !== '' ) {
                     needle = needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                 }
-                const log = needleNot === false && needle === '' ? console.log : undefined;
+                const log = needleNot === false && needle.length === 0 ? console.log.bind(console) : undefined;
                 const reNeedle = new RegExp(needle);
                 self.alert = new Proxy(self.alert, {
                         apply: (target, thisArg, args) => {
@@ -453,76 +437,24 @@ function insertChildAfter(
 	runAt(( ) => { start(); }, /\bcomplete\b/.test(run) ? 'idle' : 'interactive');
 }
 
-/// response-prune.js
-/// alias resp.js
-/// dependency pattern-to-regex.fn
-// example.com##+js(resp, url, needle, text)
-function responsePrune(
-         resURL = '',
-         needle = '',
-         textContent = '' 
+/// set-inner-html.js
+/// alias sih.js
+/// dependency run-at.fn
+/// world ISOLATED
+function setInnerHTML(
+         selector = '',
+         text = ''    
 ) {
-	  resURL= patternToRegex(resURL, "gms"); 
-	  needle = patternToRegex(needle, "gms");
-          if ( textContent === '' ) { textContent = ''; }
-          const pruner = stringText => {
-               stringText  = stringText.replace(needle, textContent);
-               return stringText;
-          };
-          const urlFromArg = arg => {
-              if ( typeof arg === 'string' ) { return arg; }
-              if ( arg instanceof Request ) { return arg.url; }
-              return String(arg);
-          };
-          const realFetch = self.fetch;
-          self.fetch = new Proxy(self.fetch, {
-              apply: (target, thisArg, args) => {
-                  if ( resURL.test(urlFromArg(args[0])) === false ) {
-                      return Reflect.apply(target, thisArg, args);
-                  }
-                  return realFetch(...args).then(realResponse =>
-                      realResponse.text().then(text =>
-                          new Response(pruner(text), {
-                              status: realResponse.status,
-                              statusText: realResponse.statusText,
-                              headers: realResponse.headers,
-                          })
-                      )
-                  );
-              },
-	      get(target, prop, receiver) {
-       		  if(prop == "toString") {
-          		return target.toString.bind(target);
-       		  } else {
-          		return Reflect.get(target, prop, receiver);
-       		  }
-    	      },	  
-          });
-          self.XMLHttpRequest.prototype.open = new Proxy(self.XMLHttpRequest.prototype.open, {
-              apply: async (target, thisArg, args) => {
-                  if ( resURL.test(urlFromArg(args[1])) === false ) {
-                      return Reflect.apply(target, thisArg, args);
-                  }
-                  thisArg.addEventListener('readystatechange', function() {
-                	if ( thisArg.readyState !== 4 ) { return; }
-                	const type = thisArg.responseType;
-                	if ( type !== '' && type !== 'text' ) { return; }
-                	const textin = thisArg.responseText;
-                	const textout = pruner(textin);
-                	if ( textout === textin ) { return; }
-                	Object.defineProperty(thisArg, 'response', { value: textout });
-                	Object.defineProperty(thisArg, 'responseText', { value: textout });
-            	  });
-                  return Reflect.apply(target, thisArg, args);
-              },
-	      get(target, prop, receiver) {
-       		  if(prop == "toString") {
-          		return target.toString.bind(target);
-       		  } else {
-          		return Reflect.get(target, prop, receiver);
-       		  }
-    	      },	     
-          });
+    if ( selector === '' || text === '' ) { return; }
+    const innerHTML = ( ) => {
+          const nodes = document.querySelectorAll(selector);
+          try {
+		 for ( const node of nodes ) {
+		      if ( node ) { node.innerHTML = text; }
+		 }
+	  } catch { }
+    };
+    runAt(( ) => { innerHTML(); }, 'interactive');
 }
 
 /// get-url-parameter.js
